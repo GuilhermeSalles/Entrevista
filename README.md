@@ -1,6 +1,6 @@
 
 # Banco de Transferências 💳
-[![NPM](https://img.shields.io/npm/l/react)](https://github.com/GuilhermeSalles/Tomas-BigPizza/blob/main/LICENSE) 
+[![NPM](https://img.shields.io/npm/l/react)](https://github.com/GuilhermeSalles/Entrevista/blob/main/LICENSE) 
 
 ## Descrição 📚
 
