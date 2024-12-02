@@ -9,7 +9,8 @@ import com.example.demo.entities.Account;
 import jakarta.persistence.LockModeType;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
-	 @Lock(LockModeType.PESSIMISTIC_WRITE)
-	    @Query("SELECT a FROM Account a WHERE a.id = :id")
-	    Account findByIdWithLock(Long id);
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT a FROM Account a WHERE a.id = :id")
+	Account findByIdWithLock(Long id);
+
 }

@@ -1,5 +1,8 @@
 package com.example.demo.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,7 +11,6 @@ import com.example.demo.dtos.AccountDTO;
 import com.example.demo.entities.Account;
 import com.example.demo.repositories.AccountRepository;
 import com.example.demo.services.exceptions.ResourceNotFoundException;
-
 @Service
 public class AccountService {
 
@@ -55,23 +57,33 @@ public class AccountService {
 	@Transactional
 	public void transfer(Long originAccountId, Long destinationAccountId, Double amount) {
 		if (amount <= 0) {
-			if (amount <= 0) {
-				throw new IllegalArgumentException("O valor da transferência deve ser positivo.");
-			}
-
-			Account originAccount = accountRepository.findByIdWithLock(originAccountId);
-			Account destinationAccount = accountRepository.findByIdWithLock(destinationAccountId);
-
-			if (originAccount.getBalance() < amount) {
-				throw new IllegalArgumentException("Saldo insuficiente na conta de origem.");
-			}
-
-			originAccount.setBalance(originAccount.getBalance() - amount);
-			destinationAccount.setBalance(destinationAccount.getBalance() + amount);
-
-			accountRepository.save(originAccount);
-			accountRepository.save(destinationAccount);
+			throw new IllegalArgumentException("O valor da transferência deve ser positivo.");
 		}
+
+		Account originAccount = accountRepository.findByIdWithLock(originAccountId);
+		Account destinationAccount = accountRepository.findByIdWithLock(destinationAccountId);
+
+		if (originAccount.getBalance() < amount) {
+			throw new IllegalArgumentException("Saldo insuficiente na conta de origem.");
+		}
+
+		originAccount.setBalance(originAccount.getBalance() - amount);
+		destinationAccount.setBalance(destinationAccount.getBalance() + amount);
+
+		accountRepository.save(originAccount);
+		accountRepository.save(destinationAccount);
 	}
 
+	 public List<AccountDTO> listAllAccounts() {
+	        List<Account> accounts = accountRepository.findAll();
+	        return accounts.stream()
+	                .map(account -> new AccountDTO(account.getAccountNumber(), account.getOwnerName(), account.getBalance()))
+	                .collect(Collectors.toList());
+	    }
+	 
+	 @Transactional(readOnly = true)
+	    public Account getAccountById(Long id) {
+	        return accountRepository.findById(id)
+	                .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada com o ID: " + id));
+	    }
 }

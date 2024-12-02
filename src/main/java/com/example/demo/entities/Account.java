@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "tb_accounts")
@@ -26,10 +25,6 @@ public class Account {
 
 	@Column(nullable = false)
 	private Double balance;
-
-    @Version
-    private Integer version; //bloqueio otimista
-
 	
 	public Account() {
 	}

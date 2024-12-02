@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,51 +14,63 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.example.demo.entities.Account;
 import com.example.demo.repositories.AccountRepository;
 
-@SpringBootTest 
-public class AccountServiceTest {
+@SpringBootTest
+class AccountServiceTest {
 
-    @Autowired
-    private AccountService accountService;
+	@Autowired
+	private AccountService accountService;
 
-    @Autowired
-    private AccountRepository accountRepository;
+	@Autowired
+	private AccountRepository accountRepository;
 
-    private Account account;
+	private Account accountOrigin;
+	private Account accountDestination;
 
-    @BeforeEach
-    public void setup() {
-        // Cria uma conta inicial com saldo de 1000
-        account = new Account(null, "123456", "Test User", 1000.0);
-        account = accountRepository.save(account);
-    }
+	@BeforeEach
+	void setup() {
+		// Criação de contas para teste
+		accountOrigin = accountRepository.save(new Account(null, "123456", "Origin User", 1000.0));
+		accountDestination = accountRepository.save(new Account(null, "654321", "Destination User", 500.0));
+	}
 
-    @Test
-    public void testConcurrentTransactions() throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(2); // Cria um pool de 10 threads
+	@Test
+	@DisplayName("Testa múltiplas transferências concorrentes garantindo consistência nos saldos")
+	void testConcurrentTransfers() throws InterruptedException {
+		int numberOfTransfers = 5; // Número de transferências para simular
+		double transferAmount = 100.0; // Valor de cada transferência
 
-        // Simula 10 threads realizando transações simultâneas
-        for (int i = 0; i < 5; i++) {
-            executor.submit(() -> accountService.creditAccount(account.getId(), 100.0)); // Crédito
-            executor.submit(() -> {
-                try {
-                    accountService.debitAccount(account.getId(), 50.0); // Débito
-                } catch (IllegalArgumentException ignored) {
-                    // Ignora erros de saldo insuficiente para fins de teste
-                }
-            });
-        }
+		ExecutorService executor = Executors.newFixedThreadPool(5); // Pool de threads
 
-        // Aguarda a execução de todas as threads
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-            Thread.sleep(100);
-        }
+		// Simular múltiplas transferências
+		for (int i = 0; i < numberOfTransfers; i++) {
+			executor.submit(
+					() -> accountService.transfer(accountOrigin.getId(), accountDestination.getId(), transferAmount));
+			System.out.println("Transferiu: " + (i + 1) + "vezes");
+		}
 
-        // Recupera o saldo final da conta
-        Account updatedAccount = accountRepository.findById(account.getId()).orElseThrow();
+		// Finalizar execução das threads
+		executor.shutdown();
+		while (!executor.isTerminated()) {
+			Thread.sleep(100);
+		}
 
-        // Verifica se o saldo é consistente
-        System.out.println("Saldo final: " + updatedAccount.getBalance());
-        assertThat(updatedAccount.getBalance()).isGreaterThanOrEqualTo(0);
-    }
+		// Recuperar saldos após as transferências
+		Account updatedOrigin = accountRepository.findById(accountOrigin.getId()).orElseThrow();
+		Account updatedDestination = accountRepository.findById(accountDestination.getId()).orElseThrow();
+
+		// Saldo esperado
+		double expectedOriginBalance = accountOrigin.getBalance() - (numberOfTransfers * transferAmount);
+		double expectedDestinationBalance = accountDestination.getBalance() + (numberOfTransfers * transferAmount);
+
+		// Saldo esperado
+		System.out.println("Saldo da Conta de Origem ESPERADO: " + expectedOriginBalance);
+		System.out.println("Saldo da Conta de Destino ESPERADO: " + expectedDestinationBalance);
+
+		// Verificar consistência dos saldos
+		System.out.println("Saldo da Conta de Origem: " + updatedOrigin.getBalance());
+		System.out.println("Saldo da Conta de Destino: " + updatedDestination.getBalance());
+
+		assertThat(updatedOrigin.getBalance()).isEqualTo(expectedOriginBalance);
+		assertThat(updatedDestination.getBalance()).isEqualTo(expectedDestinationBalance);
+	}
 }
