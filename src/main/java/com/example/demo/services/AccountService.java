@@ -55,27 +55,23 @@ public class AccountService {
 	@Transactional
 	public void transfer(Long originAccountId, Long destinationAccountId, Double amount) {
 		if (amount <= 0) {
-			throw new IllegalArgumentException("O valor da transferência deve ser positivo.");
+			if (amount <= 0) {
+				throw new IllegalArgumentException("O valor da transferência deve ser positivo.");
+			}
+
+			Account originAccount = accountRepository.findByIdWithLock(originAccountId);
+			Account destinationAccount = accountRepository.findByIdWithLock(destinationAccountId);
+
+			if (originAccount.getBalance() < amount) {
+				throw new IllegalArgumentException("Saldo insuficiente na conta de origem.");
+			}
+
+			originAccount.setBalance(originAccount.getBalance() - amount);
+			destinationAccount.setBalance(destinationAccount.getBalance() + amount);
+
+			accountRepository.save(originAccount);
+			accountRepository.save(destinationAccount);
 		}
-
-		Account originAccount = accountRepository.findById(originAccountId).orElseThrow(
-				() -> new ResourceNotFoundException("Conta de origem não encontrada com o ID: " + originAccountId));
-
-		Account destinationAccount = accountRepository.findById(destinationAccountId)
-				.orElseThrow(() -> new ResourceNotFoundException(
-						"Conta de destino não encontrada com o ID: " + destinationAccountId));
-
-		if (originAccount.getBalance() < amount) {
-			throw new IllegalArgumentException("Saldo insuficiente na conta de origem.");
-		}
-
-		// Debita da conta de origem
-		originAccount.setBalance(originAccount.getBalance() - amount);
-		accountRepository.save(originAccount);
-
-		// Credita na conta de destino
-		destinationAccount.setBalance(destinationAccount.getBalance() + amount);
-		accountRepository.save(destinationAccount);
 	}
 
 }
