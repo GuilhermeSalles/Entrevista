@@ -6,6 +6,10 @@
 
 Este projeto simula um sistema bancário simples com operações de **crédito**, **débito** e **transferência** entre contas bancárias. A principal funcionalidade implementada é a **transferência entre contas**, que inclui o uso de **bloqueio pessimista** para evitar inconsistências de saldo em operações concorrentes.
 
+## 🔍 Modelo de Domínio  
+
+![Modelo de Domínio Banco](https://github.com/GuilhermeSalles/assets/blob/main/modelentrevista.png)
+
 ### O que é o bloqueio pessimista? 🔒
 Em um ambiente de transações concorrentes, como em sistemas bancários, é importante garantir que uma operação de **transferência** não interfira ou seja interferida por outra operação simultânea. O **bloqueio pessimista** é utilizado para garantir que, durante a verificação e a modificação do saldo das contas envolvidas, nenhuma outra transação consiga acessar as mesmas contas até que a transação atual seja completada.
 
