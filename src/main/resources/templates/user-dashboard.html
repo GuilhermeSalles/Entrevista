@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard do Usuário</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Dashboard do Usuário</span>
+            <a href="/logout" class="btn">Sair</a>
+        </div>
+    </header>
+    <main>
+        <h1>Insira o Número da Conta</h1>
+        <form action="/user/dashboard" method="post" style="width: 50%; margin: 20px auto; background: #fff; padding: 20px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+            <label for="accountNumber">Número da Conta:</label>
+            <input type="text" id="accountNumber" name="accountNumber" required style="width: 100%; padding: 10px; margin-bottom: 15px;"><br>
+            <button type="submit" class="btn">Acessar Conta</button>
+        </form>
+        <p th:if="${error}" th:text="${error}" style="color: red;"></p>
+        <a href="javascript:history.back()" class="btn">Voltar</a>
+    </main>
+</body>
+</html>

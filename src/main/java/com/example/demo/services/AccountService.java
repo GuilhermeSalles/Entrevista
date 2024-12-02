@@ -86,4 +86,11 @@ public class AccountService {
 	        return accountRepository.findById(id)
 	                .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada com o ID: " + id));
 	    }
+	 
+	 
+
+	    public Account findByAccountNumber(String accountNumber) {
+	        return accountRepository.findByAccountNumber(accountNumber)
+	                .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
+	    }
 }

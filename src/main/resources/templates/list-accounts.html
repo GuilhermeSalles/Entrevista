@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Contas</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Lista de Contas</span>
+            <a href="/logout" class="btn">Sair</a>
+        </div>
+    </header>
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Número da Conta</th>
+                    <th>Nome do Titular</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="account : ${accounts}">
+                    <td th:text="${account.accountNumber}"></td>
+                    <td th:text="${account.ownerName}"></td>
+                    <td th:text="${account.balance}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="text-align: center;">
+            <a href="/thymeleaf/accounts/create" class="btn">Criar Nova Conta</a>
+        </div>
+        <a href="javascript:history.back()" class="btn">Voltar</a>
+    </main>
+</body>
+</html>

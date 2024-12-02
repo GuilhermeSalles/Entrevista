@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Perfil do Usuário</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Perfil do Usuário</span>
+            <a href="/logout" class="btn">Sair</a>
+        </div>
+    </header>
+    <main class="container" style="background: #fff; padding: 20px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); border-radius: 8px; max-width: 800px; margin: 20px auto;">
+        <h1>Bem-vindo ao seu perfil!</h1>
+        <p><strong>Nome:</strong> <span th:text="${username}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${email}"></span></p>
+        <p><strong>Número da Conta:</strong> <span th:text="${accountNumber}"></span></p>
+        <p><strong>Saldo:</strong> R$ <span th:text="${balance}"></span></p>
+        <a href="/user/dashboard" class="btn" style="margin-top: 20px;">Voltar para o Dashboard</a>
+    </main>
+    <footer style="background-color: #333; color: white; text-align: center; padding: 10px; margin-top: 20px;">
+        <p>&copy; 2024 Sistema Bancário. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

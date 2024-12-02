@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard do Usuário</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Bem-vindo, <span th:text="${account.ownerName}"></span>!</h1>
+            <a href="/logout" class="btn">Sair</a>
+        </div>
+    </header>
+    <main class="container">
+        <div class="account-info" style="background: #fff; padding: 20px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); border-radius: 8px; margin-bottom: 20px;">
+            <h2>Conta: <span th:text="${account.accountNumber}"></span></h2>
+            <p>Saldo Atual: <span class="balance" th:text="${account.balance}"></span></p>
+        </div>
+        <div class="actions" style="text-align: center;">
+            <a th:href="@{/user/deposit(accountNumber=${account.accountNumber})}" class="btn" style="margin-right: 10px;">Depositar</a>
+            <a th:href="@{/user/transfer(accountNumber=${account.accountNumber})}" class="btn" style="margin-right: 10px;">Transferir</a>
+            <a th:href="@{/user/withdraw(accountNumber=${account.accountNumber})}" class="btn">Sacar</a>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="javascript:history.back()" class="btn" style="background-color: #4caf50;">Voltar</a>
+        </div>
+    </main>
+</body>
+</html>
